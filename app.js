@@ -373,17 +373,17 @@ function wireTopCardGestures() {
     // Prefer horizontal swipes unless upward is strong
     if (dx > SWIPE_X_THRESHOLD && absX >= absY) {
       // Swipe right -> Like
-      animateTopCardOff("like");
+      triggerAction("like");
       return;
     }
     if (dx < -SWIPE_X_THRESHOLD && absX >= absY) {
       // Swipe left -> Reject
-      animateTopCardOff("nope");
+      triggerAction("nope");
       return;
     }
     if (dy < -SWIPE_UP_THRESHOLD && absY > absX) {
       // Swipe up -> Super like
-      animateTopCardOff("superlike");
+      triggerAction("superlike");
       return;
     }
 
