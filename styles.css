@@ -110,10 +110,20 @@ body {
   will-change: transform;
   transition: transform 220ms ease, opacity 220ms ease, filter 220ms ease;
 }
+.card.is-dragging {
+  transition: none !important;
+  cursor: grabbing;
+}
 
-.card:nth-child(1) { transform: translateY(0) scale(1); }
-.card:nth-child(2) { transform: translateY(10px) scale(0.985); filter: brightness(0.95); }
-.card:nth-child(3) { transform: translateY(20px) scale(0.97); filter: brightness(0.9); }
+.card__media {
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none; /* important for swipe + double-tap */
+}
+
+.card:nth-last-child(1) { transform: translateY(0) scale(1); }
+.card:nth-last-child(2) { transform: translateY(10px) scale(0.985); filter: brightness(0.95); }
+.card:nth-last-child(3) { transform: translateY(20px) scale(0.97); filter: brightness(0.9); }
 
 .card__media {
   height: 70%;
