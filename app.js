@@ -254,6 +254,9 @@ function triggerAction(action) {
 function wireTopCardGestures() {
   const card = getTopCardEl();
   if (!card) return;
+  lastTapTime = 0;
+  lastTapX = 0;
+  lastTapY = 0;
 
   // Remove any old handlers by cloning? We'll just set handlers fresh with pointer events.
   // Because we re-render the deck each time, this is safe.
