@@ -50,10 +50,18 @@ function imgFor(seed) {
   return `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=1200&q=80`;
 }
 function pickPhotos(count = 3) {
-  // choose N distinct seeds
-  const chosen = new Set();
-  while (chosen.size < count) chosen.add(sample(UNSPLASH_SEEDS));
-  return Array.from(chosen).map(imgFor);
+  const cap = Math.min(count, UNSPLASH_SEEDS.length);
+
+  // Make a copy so we don't mutate the original list
+  const seeds = [...UNSPLASH_SEEDS];
+
+  // Fisher–Yates shuffle (better than sort(() => Math.random() - 0.5))
+  for (let i = seeds.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [seeds[i], seeds[j]] = [seeds[j], seeds[i]];
+  }
+
+  return seeds.slice(0, cap).map(imgFor);
 }
 
 function generateProfiles(count = 12) {
