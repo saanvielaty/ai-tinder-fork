@@ -316,12 +316,6 @@ function wireTopCardGestures() {
     return dt > 0 && dt <= DOUBLE_TAP_MS && dist <= TAP_MOVE_TOLERANCE;
   }
 
-  // Also support desktop double click
-  img.addEventListener("dblclick", (e) => {
-    e.preventDefault();
-    nextPhotoOnTopCard();
-  });
-
   img.addEventListener("pointerdown", (e) => {
     // left click/touch/pen
     pointerId = e.pointerId;
