@@ -93,6 +93,7 @@ const nopeBtn = document.getElementById("nopeBtn");
 const superLikeBtn = document.getElementById("superLikeBtn");
 
 let profiles = [];
+let isAnimating = false;
 
 // Gesture tuning
 const SWIPE_X_THRESHOLD = 110;     // px
@@ -204,28 +205,30 @@ function nextPhotoOnTopCard() {
 // Swiping + actions
 // -------------------
 function commitAction(action) {
-  // action: "nope" | "like" | "superlike"
   const top = getTopProfile();
-  if (!top) return;
+  if (!top) {
+    isAnimating = false;
+    return;
+  }
 
-  // You can replace these logs with real state updates / API calls later.
   if (action === "like") console.log("LIKE:", top.name, top.id);
   if (action === "nope") console.log("NOPE:", top.name, top.id);
   if (action === "superlike") console.log("SUPER LIKE:", top.name, top.id);
 
-  // Remove the top profile and re-render
   profiles.shift();
+  isAnimating = false;
   renderDeck();
 }
 
 function animateTopCardOff(action) {
   const card = getTopCardEl();
-  if (!card) return;
+  if (!card) {
+    isAnimating = false;
+    return;
+  }
 
-  // ensure transition is on
   card.classList.remove("is-dragging");
 
-  // Launch direction
   const w = window.innerWidth || 1000;
   const x = action === "like" ? w * 0.9 : action === "nope" ? -w * 0.9 : 0;
   const y = action === "superlike" ? -window.innerHeight * 0.7 : 0;
@@ -234,17 +237,33 @@ function animateTopCardOff(action) {
   card.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
   card.style.opacity = "0";
 
-  // After animation completes, commit action
-  const onDone = () => {
-    card.removeEventListener("transitionend", onDone);
+  let finished = false;
+  let timeoutId = null;
+
+  function finish() {
+    if (finished) return;
+    finished = true;
+
+    card.removeEventListener("transitionend", onTransitionEnd);
+    if (timeoutId !== null) clearTimeout(timeoutId);
+
     commitAction(action);
-  };
-  card.addEventListener("transitionend", onDone);
+  }
+
+  function onTransitionEnd(e) {
+    // Only finish once, and prefer the transform completion (more reliable “done” signal)
+    if (e.propertyName === "transform") finish();
+  }
+
+  card.addEventListener("transitionend", onTransitionEnd);
+
+  // Fallback: commit if transitionend never fires (reduced-motion, throttling, etc.)
+  timeoutId = setTimeout(finish, 700);
 }
 
 function triggerAction(action) {
-  // action buttons call this too
-  if (!getTopProfile()) return;
+  if (!getTopProfile() || isAnimating) return;
+  isAnimating = true;
   animateTopCardOff(action);
 }
 
