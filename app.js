@@ -424,25 +424,33 @@ async function resetDeck() {
 // -------------------
 // Button controls
 // -------------------
-likeBtn.addEventListener("click", () => {
-  if (profiles.length > 0 && !isAnimating) {
-    dismissCard("like");
-  }
-});
+if (likeBtn) {
+  likeBtn.addEventListener("click", () => {
+    if (profiles.length > 0 && !isAnimating) {
+      dismissCard("like");
+    }
+  });
+}
 
-nopeBtn.addEventListener("click", () => {
-  if (profiles.length > 0 && !isAnimating) {
-    dismissCard("nope");
-  }
-});
+if (nopeBtn) {
+  nopeBtn.addEventListener("click", () => {
+    if (profiles.length > 0 && !isAnimating) {
+      dismissCard("nope");
+    }
+  });
+}
 
-superLikeBtn.addEventListener("click", () => {
-  if (profiles.length > 0 && !isAnimating) {
-    dismissCard("super");
-  }
-});
+if (superLikeBtn) {
+  superLikeBtn.addEventListener("click", () => {
+    if (profiles.length > 0 && !isAnimating) {
+      dismissCard("super");
+    }
+  });
+}
 
-shuffleBtn.addEventListener("click", resetDeck);
+if (shuffleBtn) {
+  shuffleBtn.addEventListener("click", resetDeck);
+}
 
 // -------------------
 // Document-level drag listeners (only added once)
@@ -600,6 +608,13 @@ async function initPush() {
   renderPushBanner();
 }
 
-// Boot
-resetDeck();
-initPush();
+// Boot only when running in a browser (do not auto-run during tests/Node)
+if (typeof window !== "undefined" && typeof module === "undefined") {
+  resetDeck();
+  initPush();
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { generateProfiles };
+  if (typeof global !== "undefined") global.generateProfiles = generateProfiles;
+}
